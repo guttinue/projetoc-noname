@@ -1,88 +1,61 @@
-/**
- * main.h
- * Created on Aug, 23th 2023
- * Author: Tiago Barros
- * Based on "From C to C++ course - 2002"
-*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "main.h"
+#include "../include/keyboard.h"
+#include "../include/screen.h"
+#include "../include/timer.h"
 
-#include <string.h>
+#define LARGURA 40
+#define ALTURA 20
 
-#include "screen.h"
-#include "keyboard.h"
-#include "timer.h"
+typedef struct {
+    int x;
+    int y;
+} Ponto;
 
-int x = 34, y = 12;
-int incX = 1, incY = 1;
+typedef struct {
+    Ponto posicoes[800]; // LARGURA * ALTURA
+    int tamanho;
+    char direcao;
+} Cobra;
 
-void printHello(int nextX, int nextY)
-{
-    screenSetColor(CYAN, DARKGRAY);
-    screenGotoxy(x, y);
-    printf("           ");
-    x = nextX;
-    y = nextY;
-    screenGotoxy(x, y);
-    printf("Hello World");
-}
+typedef struct {
+    Ponto posicao;
+} Comida;
 
-void printKey(int ch)
-{
-    screenSetColor(YELLOW, DARKGRAY);
-    screenGotoxy(35, 22);
-    printf("Key code :");
+// Protótipos das funções
+void inicializarJogo(Cobra *cobra, Comida *comida);
+void desenharJogo(Cobra *cobra, Comida *comida);
+void atualizarJogo(Cobra *cobra, Comida *comida, int *gameOver);
+void lerEntrada(Cobra *cobra);
+void gerarComida(Comida *comida, Cobra *cobra);
+int verificarColisao(Cobra *cobra);
 
-    screenGotoxy(34, 23);
-    printf("            ");
-    
-    if (ch == 27) screenGotoxy(36, 23);
-    else screenGotoxy(39, 23);
+int main() {
+    Cobra cobra;
+    Comida comida;
+    int gameOver = 0;
 
-    printf("%d ", ch);
-    while (keyhit())
-    {
-        printf("%d ", readch());
-    }
-}
+    srand(time(NULL));
+    init_keyboard();
+    hidecursor();
+    inicializarJogo(&cobra, &comida);
 
-int main() 
-{
-    static int ch = 0;
-
-    screenInit(1);
-    keyboardInit();
-    timerInit(50);
-
-    printHello(x, y);
-    screenUpdate();
-
-    while (ch != 10) //enter
-    {
-        // Handle user input
-        if (keyhit()) 
-        {
-            ch = readch();
-            printKey(ch);
-            screenUpdate();
-        }
-
-        // Update game state (move elements, verify collision, etc)
-        if (timerTimeOver() == 1)
-        {
-            int newX = x + incX;
-            if (newX >= (MAXX -strlen("Hello World") -1) || newX <= MINX+1) incX = -incX;
-            int newY = y + incY;
-            if (newY >= MAXY-1 || newY <= MINY+1) incY = -incY;
-
-            printKey(ch);
-            printHello(newX, newY);
-
-            screenUpdate();
-        }
+    while (!gameOver) {
+        desenharJogo(&cobra, &comida);
+        lerEntrada(&cobra);
+        atualizarJogo(&cobra, &comida, &gameOver);
+        delay(100); // Ajuste a velocidade do jogo
     }
 
-    keyboardDestroy();
-    screenDestroy();
-    timerDestroy();
+    showcursor();
+    close_keyboard();
+    clrscr();
+    printf("Game Over! Sua pontuação foi: %d\n", cobra.tamanho - 1);
 
     return 0;
 }
+
+// Implementação das funções (mesma implementação fornecida anteriormente)
+// ...

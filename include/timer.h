@@ -4,6 +4,8 @@
  * Author: Tiago Barros
  * Based on "From C to C++ course - 2002"
 */
+#ifndef TIMER_H;
+#define TIMER_H;
 
 void timerInit(int valueMilliSec);
 
@@ -14,3 +16,9 @@ void timerUpdateTimer(int valueMilliSec);
 int timerTimeOver();
 
 void timerPrint();
+
+void delay(int milliseconds);
+
+#endif;
+
+

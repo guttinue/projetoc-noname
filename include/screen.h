@@ -11,6 +11,11 @@
 
 #include <stdio.h>
 
+void clrscr();
+void gatoxy(int x, int y);
+void hidecursor();
+void showcursor();
+
 // Terminal control sequences
 #define ESC            "\033"
 #define NORMALTEXT     "[0m"
